@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+	<head>
+		<title>KNMI Data 1995</title>
+	</head>
+	<body>
+	<h3 style="text-align: center;"> KNMI Data 1995 </h3>
+	<canvas id="graph" width="900" height="500"></canvas>
+
+		<script>
+		// Besides KNMI data, the following sources are used in this code:
+		// 1. https://developer.mozilla.org/
+		// 2. http://eloquentjavascript.net/
+		// 3. https://datas.mprog.nl/
+
+
+		// send out a request
+		var request = new XMLHttpRequest();
+
+		// create a list for the data
+		var data = [];
+
+		// initialze a synchronic request
+		request.open('GET', 'KNMI.csv', false);
+		request.onload = function () {
+			if (request.readyState === request.DONE) {
+				if (request.status === 200) {
+					// push the response to the request as text (or null if the request was unsuccesful) in data list
+					for (var i = 1; i < 366; i++) {
+						data.push(request.responseText.split('\n')[i]);
+					}
+				}
+			}
+			
+		};
+		request.send();
+
+		// create lists to store data in
+		var dateString = [];
+		var date = []; 
+		var temp = [];
+		var temp2 = [];
+
+		// make a variable to store the length of data
+		var lineLength = data.length;
+
+		// loop through the file's lines
+		for (var i = 0; i < lineLength; i++) {
+
+			// the first part before the semicolon is a datastring
+			dateString.push(data[i].split(';')[0]);
+
+			// the first 4 characters represent the year
+			var year = dateString[i].toString().substring(0,4);
+
+			// the 4th to 6th character represent the month
+			var month = dateString[i].toString().substring(4,6);
+
+			// the 6th to 8th character represent the day
+			var day = dateString[i].toString().substring(6,8);
+
+			// add date variables for year, date and month to list date
+			date.push(new Date(year, month-1, day));
+
+			// add temperature as integers to list temperature 
+			temp.push(Number(data[i].split(';')[1]));
+
+			// scale temperature to show graph 'upside down'
+			temp2.push(graph.height - temp[i]);
+		}
+
+
+		// get date in miliseconds from 1970
+		var dates = [];
+		for (var i= 0; i< lineLength; i++) {
+			dates.push(date[i].getTime());
+		}
+
+
+		function getMinMax(arr){
+			// initiate with integers that are highly unlikely to be the minimum or maximum
+			var max_value = -1000000;
+			var min_value = 10000000;
+
+			// loop through array and remember the minimum and maximum value
+			for (i=0; i<arr.length; i++) {
+				if (arr[i] > max_value) {
+					max_value = arr[i];
+				}
+				if (arr[i] < min_value) {
+					min_value = arr[i];
+				}
+			}
+			// return the minimum and maximum value as a list with two values
+			return [min_value, max_value];
+		}
+
+
+		// get minimum and maximum temperature
+		var min_value = getMinMax(temp)[0];
+		var max_value = getMinMax(temp)[1];
+
+
+
+		// source: https://datas.mprog.nl/homework/javascript
+		function createTransform(domain, range){
+
+		    var domain_min = domain[0]
+		    var domain_max = domain[1]
+		    var range_min = range[0]
+		    var range_max = range[1]
+
+		    // formulas to calculate the alpha and the beta
+		   	var alpha = (range_max - range_min) / (domain_max - domain_min)
+		    var beta = range_max - alpha * domain_max
+
+		    // returns the function for the linear transformation (y= a * x + b)
+		    return function(x){
+		      return alpha * x + beta;
+		    }
+		}
+
+
+		// create variable padding to use on x and y axis
+		var xPadding = 40;
+		var yPadding = 30;
+
+		// store value where Y is 0
+		var centerY = Math.round(Math.abs(min_value/ Math.abs((max_value - min_value)) * (graph.height - yPadding)));
+
+		// start with graph
+		var canvas = document.getElementById('graph');
+		var context = canvas.getContext('2d');
+
+		// draw x and y axis
+		context.beginPath();
+		context.moveTo(xPadding, 0);
+		context.lineTo(xPadding, graph.height - yPadding);
+		context.lineTo(graph.width - xPadding/4, graph.height - yPadding);
+		context.stroke();
+			context.closePath();
+
+
+		// get function to get coördinates for date
+		transformDateFunc = createTransform([dates[0], dates[dates.length-2]], [xPadding,graph.width-xPadding/2.]);
+
+
+		// get minimum and maximum temperature
+		var tempMin = getMinMax(temp2)[0];
+		var tempMax = getMinMax(temp2)[1];
+
+
+		// get function that gets coördinates for temperature
+		transformTempFunc = createTransform([tempMin, tempMax], [0,graph.height-yPadding]);
+
+
+		// create lists of coördinates for both dates and temperatures
+		var transformDate = [];
+		var transformTemp = [];	
+
+		// add coördinates to lists
+		for (var i= 0; i<lineLength-1; i++) {
+			transformDate.push(transformDateFunc(dates[i]));
+			transformTemp.push(transformTempFunc(temp2[i]));
+		}
+
+
+		// draw a graph by conneting each datapoint to the next until the end of the dataset
+		context.beginPath();
+		for (var i = 0; i < lineLength-1; i++){
+			// x = transformDate[i], y = transformTemp[i]
+			context.moveTo(transformDate[i-1], transformTemp[i-1]);
+			context.lineTo(transformDate[i], transformTemp[i]);
+			context.scale( 1, 1);
+			context.stroke();	
+		}
+
+
+		// To draw the x-axis text
+		// create a list that contains the name of each month
+		var monthNames =  ["January", "February", "March", "April", "May", "June",
+		 "July", "August", "September", "October", "November", "December"];
+
+		// write once per 31 days each month on the x-axis
+		for(var i = 0; i < transformDate.length; i = i + 31) {
+		    context.fillText(monthNames[date[i].getMonth()], transformDate[i], graph.height - yPadding + 15);
+		}
+
+		// a constant to store amount of Y labels
+		var maxYLabels = 10;
+
+		// write 10 Y labels and divide them equally over the vertical axis
+		for(var i=0; i <maxYLabels; i +=1) {
+			var plotText = 0.1 * (min_value + i*(max_value - min_value)/maxYLabels);
+			var labelHeight = (graph.height - yPadding) - i * (graph.height - yPadding)/maxYLabels;
+			context.fillText(plotText.toFixed(1), xPadding/2.5 , labelHeight);
+		}
+
+
+		// font, fontsize and color
+		context.font = "bold 15px Times New Roman";
+		context.fillStyle = "#000000";
+
+		// write the Y-title vertically	
+		context.save();
+		context.rotate(-Math.PI/2);
+		context.textAlign = "center";
+		context.fillText("Average Day Temperature in Celsius", -graph.height/2, xPadding/1.75 - 13);
+		context.restore();
+
+		// write the X-title horizontally
+		context.textAlign = "center";
+		context.fillText("Months", graph.width/2 +10, graph.height-2);
+		</script>
+	<footer style="font: 10px Times New Roman;">
+		Line graph in JavaScript for UvA Data Processing 2017. Visualisation by Melissa Wijngaarden. Weatherdata de Bilt for the year 1995. Bron:http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
+	</footer>
+	</body>
+</html>

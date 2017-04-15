@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+	<head>
+		<title>KNMI Data 1995</title>
+	</head>
+	<body>
+	<canvas id="myCanvas" width="578" height="400"></canvas>
+		<script type="text/javascript" src="static/js/read-csv.js"></script>
+		<input type="file" id="csvFileInput" onchange="handleFiles(this.files)" accept=".csv">
+
+		<script>
+		function handleFiles(files) {
+	      // Check for the various File API support.
+	      if (window.FileReader) {
+	          // FileReader are supported.
+	          getAsText(files[0]);
+	      } else {
+	          alert('FileReader are not supported in this browser.');
+	      }
+	    }
+
+	    function getAsText(KNMI.csv) {
+	      var reader = new FileReader();
+	      // Read file into memory as UTF-8      
+	      reader.readAsText(KNMI.csv);
+	      // Handle errors load
+	      reader.onload = loadHandler;
+	      reader.onerror = errorHandler;
+	    }
+
+	    function loadHandler(event) {
+	      var csv = event.target.result;
+	      processData(csv);
+	    }
+
+	    function processData(csv) {
+	        var allTextLines = csv.split(/\r\n|\n/);
+	        var lines = [];
+	        for (var i=0; i<allTextLines.length; i++) {
+	            var data = allTextLines[i].split(';');
+	                var tarr = [];
+	                for (var j=0; j<data.length; j++) {
+	                    tarr.push(data[j]);
+	                }
+	                lines.push(tarr);
+	        }
+	      console.log(lines);
+	    }
+
+	    function errorHandler(evt) {
+	      if(evt.target.error.name == "NotReadableError") {
+	          alert("Canno't read file !");
+	      }
+	    }
+
+		function createTransform(domain, range){
+			// domain is a two-element array of the data bounds [domain_min, domain_max]
+			// range is a two-element array of the screen bounds [range_min, range_max]
+			// this gives you two equations to solve:
+			// range_min = alpha * domain_min + beta
+			// range_max = alpha * domain_max + beta
+		 		// a solution would be:
+
+		    var domain_min = domain[0]
+		    var domain_max = domain[1]
+		    var range_min = range[0]
+		    var range_max = range[1]
+
+		    // formulas to calculate the alpha and the beta
+		   	var alpha = (range_max - range_min) / (domain_max - domain_min)
+		    var beta = range_max - alpha * domain_max
+
+		    // returns the function for the linear transformation (y= a * x + b)
+		    return function(x){
+		      return alpha * x + beta;
+		    }
+		}
+
+			console.log(data);
+			console.log(data.length);
+			var canvas = document.getElementById('myCanvas');
+			var context = canvas.getContext('2d');
+			var dateString = [];
+			var date = []; 
+			var temp = [];
+
+
+			// var lineLength = data.length;
+			// console.log(data.length); => Data.length == 0, why?
+
+			for (var i = 1; i < 367; i++) {
+				dateString.push(data[i].split(';')[0]);
+				console.log(data[i])
+				var year = dateString[i - 1].toString().substring(0,4);
+				var month = dateString[i - 1].toString().substring(4,6);
+				var day = dateString[i - 1].toString().substring(6,8);
+				date.push(new Date(year, month-1, day));
+				temp.push(Number(data[i].split(';')[1]));
+			}
+			console.log(date);
+			console.log(temp);
+
+			var dates = [];
+			for (var i= 1; i<367; i++) {
+				dates.push(date[i-1].getTime());
+			}
+
+			function getMinMax(arr){
+				var max_value = -1000000;
+				var min_value = 10000000;
+
+				for (i=0; i<arr.length; i++) {
+					if (arr[i] > max_value) {
+						max_value = arr[i];
+					}
+					if (arr[i] < min_value) {
+						min_value = arr[i];
+					}
+				}
+				console.log(min_value,max_value);
+				return [min_value, max_value];
+			}
+
+			transformDateFunc = createTransform([dates[0], dates[dates.length-2]], [0,578]);
+			var tempMin = getMinMax(temp)[0];
+			var tempMax = getMinMax(temp)[1];
+			transformTempFunc = createTransform([tempMin, tempMax], [0,400]);
+			console.log(dates[0], dates[dates.length-2]);
+
+			console.log(tempMin, tempMax);
+
+			var transformDate = [];
+			var transformTemp = [];	
+			for (var i= 0; i<lineLength-1; i++) {
+				transformDate.push(transformDateFunc(dates[i]));
+				transformTemp.push(transformTempFunc(temp[i]));
+			}
+
+			context.beginPath();
+			for (var i = 0; i < lineLength-1; i++){
+				context.moveTo(transformDate[i], transformTemp[i]);
+				context.lineTo(transformDate[i+1], transformTemp[i+1]);
+				context.stroke();	
+			}
+
+			context.fillStyle = "#000000"; // set color
+			context.font = "normal normal 30px Helvetica"; // set font weight, size, etc
+			context.textBaseline = "right"; // how to align the text vertically
+			context.textAlign = "left"; // how to align the text horizontally
+			context.fillText("KNMI Data 1995", 100, 100); // text, x, y
+			context.fillRect(0, 0, 100, 100)
+			console.log(transformTemp);
+
+		</script>
+	</body>
+</html>
