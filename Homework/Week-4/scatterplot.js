@@ -87,7 +87,7 @@ var yAxis = d3.svg.axis()
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
       .attr("y", - 40)
-      .attr("x", - (height/2))
+      .attr("x", - (height / 2))
       .attr("dy", "0.71em")
       .style("text-anchor", "middle")
       .text("Satisfaction with Maximum of 10")
@@ -118,19 +118,19 @@ var yAxis = d3.svg.axis()
         return color(d.country); 
       })
       // store values to access later
-      .attr("ctr", function (d, i)
+      .attr("ctr", function (d,i)
       {
         return d.country;
       })
-      .attr("ftm", function (d, i)
+      .attr("ftm", function (d,i)
       {
         return d.freetime;
       })
-      .attr("stf", function (d, i)
+      .attr("stf", function (d,i)
       {
         return d.satisfaction;
       })
-      .attr("unpmt", function (d, i)
+      .attr("unpmt", function (d,i)
       {
         return d.unemployment;
       })
@@ -165,7 +165,7 @@ var yAxis = d3.svg.axis()
         // when hovered over show relevant unemploymentrate
         unempRate.attr("x", currentX + 5)
         .style("visibility", "visible")
-        .attr("y", (Number(currentD) - 1 ))
+        .attr("y", (Number(currentD) - 1))
         .text("Unemploymentrate: " + currentUnpmt)
       })
       .on("mouseout", function ()
