@@ -1,0 +1,30 @@
+/* 
+	scatterplot.css
+	design for scatterplot.html
+	Melissa Wijngaarden, 10810412
+	Data Processing Week 4
+
+*/
+
+.scatterplotTitle {
+font: 25px sans-serif;
+top: 100%;
+left: 50%;
+margin-left: 50px;
+margin-top: 25px; 
+}
+
+body {
+  font: 14px sans-serif;
+}
+
+.hover {
+	font-weight: bold;
+}
+
+.information {
+	position:absolute;
+   	bottom:0;
+   	width:100%;
+   	height:100px;
+}
