@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<link rel="stylesheet" type="text/css" href="mslinegraph.css" media="screen" />
+<title> Weekly Data on AEX in EURO in Period 2007 - 2017 </title>
+</head>
+
+<body>
+	<script src="//d3js.org/d3.v3.min.js"></script>
+	<script type="text/javascript" src="oef.js"></script>
+  	<div class="linegraphTitle"> Weekly Data on AEX in EURO in Period 2007 - 2017</div>
+  	<select id="inds">
+		<option value="AEX Index" selected="selected">AEX Index</option>
+		<option value="Dow Jones Index">Dow Jones Index</option>
+	</select>
+	<div id="legendContainer" class="legendContainer">
+		<svg id="legend"></svg>
+	</div>
+	<div class="information">
+	 <br><br>
+	  Y-axes: Euro. <br>
+	  X-axes: Maand.<br> 
+	  Line Graph made by Melissa Wijngaarden for Data Processing at UvA May 2017<br>
+	  Sources: http://www.yahoo.finance
+	</div>
+</body>
