@@ -22,7 +22,7 @@ var svg = d3.select("body").append("svg")
 
 // use the albersUsa projection with focus on the USA
 var projection = d3.geo.albersUsa()
-                   .scale(900)
+                   .scale(850)
                    .translate([width / 2, height / 2]);
 
 // draw pahts
