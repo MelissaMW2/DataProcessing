@@ -1,0 +1,93 @@
+<!-- 
+  interactive.html
+  interactive webpage mapping GSP's of the USA
+  Melissa Wijngaarden, 10810412
+  Week 6 & 7 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>GSP America</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="interactive.css" media="screen">
+</head>
+<body>
+
+<div class="jumbotron text-center">
+  <h1 class="upper">Welcome to the Past<h1>
+  <p class="intro">Gross State Product in 1960 in the United States of America</p>
+</div>
+
+<script type="text/javascript" src="interactive.js"></script>
+
+<div id="dashboard">
+  <div id="dashboard-title-container">
+    <div id="dashboard-title">EXPLORE OTHER TIMES</div>
+  </div>
+  
+  <div id="selector_container">
+    <div id="selector_menu">
+      <form>
+        <div style="display: inline-block;">
+          <label for="time_selector" style = "padding-bottom: 5px;">Select Timetravel</label>
+          <select id="time_selector" class="selector">
+            <option value="1960">To the Past</option>
+            <option value="2016">To the Present</option>
+            <option value="2022">To the Future</option>
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="col-sm-3 well well-white" id="state-info-holder">
+  <div id="state-info">
+    <div id="state-quick-info">
+      <h4 id="state-name"></h4>
+    </div>
+  </div>
+
+    <p>Gross State Product as percentage of Gross Domestic Product:</p>
+    <div class="progress">
+      <div id="progress-move" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100000"></div>
+    </div>
+
+    <p>Gross Domestic Product in Billion Dollar:</p>
+    <div class="progress">
+      <div class="progress-bar1" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 30%;">
+        $ 543.3
+      </div>
+    </div>
+
+    <p>Population as percentage of Total Population:</p>
+    <div class="progress">
+      <div id="progress-move2" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100000"></div>
+    </div>
+
+    <p>Total Population in Million People:</p>
+    <div class="progress">
+      <div class="progress-bar2" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 30%;">
+        179.3
+      </div>
+    </div>
+</div>
+
+<div class="col-sm-3 well well-white" id="story-info">
+  <h4>The Story</h4>
+  <p>The Gross State Product is the sum of the value added by industries in a certain state. Since the United States of America are among the countries with the highest levels of inequality in the world, I wanted to see if there is a strong relation between population in one state and its added value. Also I was interested to see if there are big changes over time.</p><br><br>
+
+  <h4>The Sources</h4>
+  <p>This visualisation is made by Melissa Wijngaarden, 10810412, as the last assignment for Data Processing in the second semester of year 2016-2017 at the University of Amsterdam. As I struggled to find a good topoJSON to transorm the states to the right places on the map I ended up with some errors in the mapping. In addition I downloaded my datasets from http://www.usgovernmentrevenue.com as CSV files, which I converted to JSON with self-written pythoncode. All code can be found at my personal github page!</p>
+</div>
+        
+</body>
+</html>

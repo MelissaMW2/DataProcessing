@@ -1,0 +1,45 @@
+/*
+  interactive.css
+  interactive webpage mapping GSP's of the USA
+  Melissa Wijngaarden, 10810412
+  Week 6 & 7 
+*/
+
+path {
+stroke: grey;
+stroke-width: 1px;
+}
+ 
+body {
+font-family: Arial, sans-serif;
+}
+
+#progress-move {
+  background-color: orange;
+}
+
+#progress-move2 {
+  background-color: orange;
+}
+ 
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 150px;
+  height: 25px;
+  padding: 2px;
+  font-size: 12px;
+  background: #FFFFE0;
+  border: 1px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+#state-info {
+  text-align: center;
+}
+
+#state-info h4{
+  font-weight: bold;
+  text-shadow: none;
+}
